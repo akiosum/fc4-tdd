@@ -10,105 +10,108 @@ import {Booking} from "../../../domain/entities/booking";
 
 const DEFAULT_STATUS = "CONFIRMED";
 
-it("deve converter BookingEntity em Booking corretamente", () => {
-    const id = uuidv4();
-    const maxGuests = 10;
-    const price = 100;
-    const getCount = 2;
+describe("Booking Mapper", () => {
 
-    const propertyEntity = new PropertyEntity();
-    propertyEntity.id = id;
-    propertyEntity.name = "Casa com vista para mar";
-    propertyEntity.description = "Casa com vista para mar bem grande";
-    propertyEntity.maxGuests = maxGuests;
-    propertyEntity.basePricePerNight = price;
+    it("deve converter BookingEntity em Booking corretamente", () => {
+        const id = uuidv4();
+        const maxGuests = 10;
+        const price = 100;
+        const getCount = 2;
 
-    const userEntity = new UserEntity();
-    userEntity.id = id;
-    userEntity.name = "Akio";
+        const propertyEntity = new PropertyEntity();
+        propertyEntity.id = id;
+        propertyEntity.name = "Casa com vista para mar";
+        propertyEntity.description = "Casa com vista para mar bem grande";
+        propertyEntity.maxGuests = maxGuests;
+        propertyEntity.basePricePerNight = price;
 
-    const bookingEntity = new BookingEntity();
-    bookingEntity.id = id;
-    bookingEntity.property = propertyEntity;
-    bookingEntity.guest = userEntity;
-    bookingEntity.startDate = new Date();
-    bookingEntity.endDate = new Date();
-    bookingEntity.guestCount = getCount;
-    bookingEntity.totalPrice = price;
-    bookingEntity.status = DEFAULT_STATUS;
+        const userEntity = new UserEntity();
+        userEntity.id = id;
+        userEntity.name = "Akio";
 
-    const booking = BookingMapper.toDomain(bookingEntity);
+        const bookingEntity = new BookingEntity();
+        bookingEntity.id = id;
+        bookingEntity.property = propertyEntity;
+        bookingEntity.guest = userEntity;
+        bookingEntity.startDate = new Date();
+        bookingEntity.endDate = new Date();
+        bookingEntity.guestCount = getCount;
+        bookingEntity.totalPrice = price;
+        bookingEntity.status = DEFAULT_STATUS;
 
-    expect(booking.getId()).toBe(id);
-    expect(booking.getProperty()).toBeInstanceOf(Property);
-    expect(booking.getGuest()).toBeInstanceOf(User);
-    expect(booking.getDateRange()).toBeInstanceOf(DateRange);
-    expect(booking.getGuestCount()).toBe(getCount);
-    expect(booking.getTotalPrice()).toBe(price);
-    expect(booking.getStatus()).toBe(DEFAULT_STATUS);
-});
+        const booking = BookingMapper.toDomain(bookingEntity);
 
-it("deve lançar erro de validação ao faltar campos obrigatórios no BookingEntity", () => {
-    const id = uuidv4();
-    const maxGuests = 10;
-    const price = 100;
+        expect(booking.getId()).toBe(id);
+        expect(booking.getProperty()).toBeInstanceOf(Property);
+        expect(booking.getGuest()).toBeInstanceOf(User);
+        expect(booking.getDateRange()).toBeInstanceOf(DateRange);
+        expect(booking.getGuestCount()).toBe(getCount);
+        expect(booking.getTotalPrice()).toBe(price);
+        expect(booking.getStatus()).toBe(DEFAULT_STATUS);
+    });
 
-    const propertyEntity = new PropertyEntity();
-    propertyEntity.id = id;
-    propertyEntity.name = "Casa com vista para mar";
-    propertyEntity.description = "Casa com vista para mar bem grande";
-    propertyEntity.maxGuests = maxGuests;
-    propertyEntity.basePricePerNight = price;
+    it("deve lançar erro de validação ao faltar campos obrigatórios no BookingEntity", () => {
+        const id = uuidv4();
+        const maxGuests = 10;
+        const price = 100;
 
-    const userEntity = new UserEntity();
-    userEntity.id = id;
-    userEntity.name = "Akio";
+        const propertyEntity = new PropertyEntity();
+        propertyEntity.id = id;
+        propertyEntity.name = "Casa com vista para mar";
+        propertyEntity.description = "Casa com vista para mar bem grande";
+        propertyEntity.maxGuests = maxGuests;
+        propertyEntity.basePricePerNight = price;
 
-    const bookingEntity = new BookingEntity();
-    bookingEntity.id = id;
-    bookingEntity.property = propertyEntity;
-    bookingEntity.guest = userEntity;
-    bookingEntity.startDate = new Date();
-    bookingEntity.endDate = new Date();
-    bookingEntity.guestCount = -1;
-    bookingEntity.totalPrice = price;
-    bookingEntity.status = DEFAULT_STATUS;
+        const userEntity = new UserEntity();
+        userEntity.id = id;
+        userEntity.name = "Akio";
 
-    expect(() => BookingMapper.toDomain(bookingEntity)).toThrow(
-        "O número de hóspedes deve ser maior que zero."
-    );
-});
+        const bookingEntity = new BookingEntity();
+        bookingEntity.id = id;
+        bookingEntity.property = propertyEntity;
+        bookingEntity.guest = userEntity;
+        bookingEntity.startDate = new Date();
+        bookingEntity.endDate = new Date();
+        bookingEntity.guestCount = -1;
+        bookingEntity.totalPrice = price;
+        bookingEntity.status = DEFAULT_STATUS;
 
-it("deve converter Booking para BookingEntity corretamente", () => {
-    const id = uuidv4();
-    const maxGuests = 10;
-    const price = 100;
-    const getCount = 2;
+        expect(() => BookingMapper.toDomain(bookingEntity)).toThrow(
+            "O número de hóspedes deve ser maior que zero."
+        );
+    });
 
-    const property = new Property(
-        id,
-        "Casa com vista para mar",
-        "Casa com vista para mar bem grande",
-        maxGuests,
-        price
-    );
+    it("deve converter Booking para BookingEntity corretamente", () => {
+        const id = uuidv4();
+        const maxGuests = 10;
+        const price = 100;
+        const getCount = 2;
 
-    const user = new User(id, "Akio");
+        const property = new Property(
+            id,
+            "Casa com vista para mar",
+            "Casa com vista para mar bem grande",
+            maxGuests,
+            price
+        );
 
-    const dateRange = new DateRange(
-        new Date("2025-02-01"),
-        new Date("2025-02-02")
-    );
+        const user = new User(id, "Akio");
 
-    const booking = new Booking(id, property, user, dateRange, getCount);
-    const bookingEntity = BookingMapper.toPersistence(booking);
+        const dateRange = new DateRange(
+            new Date("2025-02-01"),
+            new Date("2025-02-02")
+        );
 
-    expect(bookingEntity.id).toBe(id);
-    expect(bookingEntity.property).toBeInstanceOf(PropertyEntity);
-    expect(bookingEntity.guest).toBeInstanceOf(UserEntity);
-    expect(bookingEntity.startDate).toEqual(dateRange.getStartDate());
-    expect(bookingEntity.endDate).toEqual(dateRange.getEndDate());
-    expect(bookingEntity.guestCount).toBe(getCount);
-    expect(bookingEntity.totalPrice).toBe(price);
-    expect(bookingEntity.status).toBe(DEFAULT_STATUS);
+        const booking = new Booking(id, property, user, dateRange, getCount);
+        const bookingEntity = BookingMapper.toPersistence(booking);
+
+        expect(bookingEntity.id).toBe(id);
+        expect(bookingEntity.property).toBeInstanceOf(PropertyEntity);
+        expect(bookingEntity.guest).toBeInstanceOf(UserEntity);
+        expect(bookingEntity.startDate).toEqual(dateRange.getStartDate());
+        expect(bookingEntity.endDate).toEqual(dateRange.getEndDate());
+        expect(bookingEntity.guestCount).toBe(getCount);
+        expect(bookingEntity.totalPrice).toBe(price);
+        expect(bookingEntity.status).toBe(DEFAULT_STATUS);
+    });
 });
